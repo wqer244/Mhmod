@@ -1,11 +1,14 @@
-<!DOCTYPE html><html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>شعر شعبي عراقي</title>  <!-- خط Amiri -->  <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet"/>
+  <title>شعر شعبي عراقي</title>
+  <!-- خط Amiri -->
+  <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet"/>
   <!-- Font Awesome -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>  <style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
     :root {
       --bg: #f0f2f5;
       --card: #fff;
@@ -23,6 +26,7 @@
       --primary: #ecf0f1;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; }
     body {
       font-family: var(--font);
       background: var(--bg);
@@ -31,6 +35,7 @@
       display:flex; flex-direction:column;
       min-height:100vh;
       transition: background var(--transition), color var(--transition), font-size var(--transition);
+      overflow-x:hidden;
     }
     button,input,textarea { font-family: var(--font); }
     button { cursor:pointer; transition: color var(--transition); }
@@ -45,8 +50,7 @@
     header h1 { font-size:1.5rem; }
     .icon-btn {
       background:transparent; border:none; font-size:1.2rem;
-      color: var(--primary);
-      transition: color var(--transition);
+      color: var(--primary); margin-left:.5rem;
     }
     .icon-btn:hover { color: var(--accent); }
 
@@ -60,13 +64,9 @@
     #poets.inactive { transform: translateX(-100%); }
 
     .poet-card {
-      background: var(--card);
-      padding:.75rem;
-      margin-bottom:.75rem;
-      border-radius:.5rem;
-      box-shadow:0 2px 6px var(--shadow);
-      cursor:pointer;
-      transition: box-shadow var(--transition);
+      background: var(--card); padding:.75rem; margin-bottom:.75rem;
+      border-radius:.5rem; box-shadow:0 2px 6px var(--shadow);
+      cursor:pointer; transition: box-shadow var(--transition);
     }
     .poet-card:hover { box-shadow:0 4px 12px var(--shadow); }
 
@@ -76,10 +76,8 @@
     }
 
     .poem-item {
-      background: var(--card);
-      padding:.75rem; margin-bottom:.5rem;
-      border-radius:.5rem;
-      box-shadow:0 1px 4px var(--shadow);
+      background: var(--card); padding:.75rem; margin-bottom:.5rem;
+      border-radius:.5rem; box-shadow:0 1px 4px var(--shadow);
       display:flex; justify-content:space-between; align-items:center;
       transition: box-shadow var(--transition);
     }
@@ -88,7 +86,6 @@
     .poem-actions button {
       background:transparent; border:none; font-size:1.1rem;
       margin-left:.5rem; color: var(--primary);
-      transition: color var(--transition);
     }
     .poem-actions .edit:hover { color: #2980b9; }
     .poem-actions .delete:hover { color: var(--danger); }
@@ -99,14 +96,16 @@
       color:#fff; border:none; border-radius:50%;
       display:flex; align-items:center; justify-content:center;
       box-shadow:0 4px 12px var(--shadow); font-size:1.5rem;
-      z-index:10; transition: transform var(--transition);
+      z-index:15;
+      transition: transform var(--transition);
     }
     #fab:hover { transform: scale(1.1); }
 
     .modal-overlay {
       position:fixed; inset:0; background:rgba(0,0,0,0.5);
       display:none; align-items:center; justify-content:center;
-      z-index:20; padding:1rem;
+      z-index:30;
+      padding:1rem;
     }
     .modal-overlay.active { display:flex; }
     .modal {
@@ -119,9 +118,7 @@
       width:100%; padding:.5rem; margin-bottom:.75rem;
       border:1px solid #ccc; border-radius:.25rem;
     }
-    .modal .buttons {
-      display:flex; gap:.5rem;
-    }
+    .modal .buttons { display:flex; gap:.5rem; }
     .modal .buttons button {
       flex:1; padding:.5rem; border:none; border-radius:.5rem;
       color:#fff; transition: background var(--transition);
@@ -134,61 +131,97 @@
       background:transparent; border:none; font-size:1.25rem;
     }
 
-    /* مودال الإعدادات */
-    #modal-settings label {
-      display:block; margin-bottom:.75rem;
-    }
+    /* Settings modal */
+    #modal-settings label { display:block; margin-bottom:.75rem; }
     #modal-settings input[type="range"] { width:100%; }
 
-    /* الواجهة الكاملة للقصيدة */
+    /* Full-screen poem */
     #full-screen {
-      position:fixed; inset:0;
-      background: #fff;
-      display:none; flex-direction:column;
-      z-index:15;
+      position:fixed; inset:0; background:var(--card);
+      display:none; flex-direction:column; z-index:20;
     }
     #full-screen.active { display:flex; }
-    #full-screen header {
-      display:flex; justify-content:flex-end;
-      padding:1rem;
+    #full-screen .modal {
+      width:100%; height:100%; max-width:none; border-radius:0;
+      display:flex; flex-direction:column;
     }
-    #full-screen header button {
-      background:transparent; border:none; font-size:1.5rem; color:#333;
+    #full-screen .full-content {
+      flex:1; overflow-y:auto; padding:2rem; text-align:center;
+      font-size:calc(1rem + 1vw); line-height:1.6; color:#000;
     }
-    .full-content {
-      flex:1; overflow-y:auto;
-      padding:2rem; text-align:center;
-      font-size:calc(1rem + 1vw);
-      line-height:1.6;
-      color: #000;
+
+    /* Side menu */
+    #side-menu {
+      position:fixed; top:0; right:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.5); display:none; z-index:25;
+      justify-content:flex-end;
+    }
+    #side-menu.active { display:flex; }
+    .side-panel {
+      background: var(--card); width:50%; height:100%; padding:1rem;
+      display:flex; flex-direction:column; box-shadow:0 4px 16px var(--shadow);
+      position:relative;
+    }
+
+    /* هنا أضفنا صورة احترافية فوق القائمة */
+    .menu-header-image {
+      width:100%; height:auto;
+      object-fit:cover; border-radius:.5rem;
+      margin-bottom:1rem;
+    }
+
+    .side-panel h3 { text-align:center; margin-bottom:1rem; }
+    .side-options { display:flex; flex-direction:column; gap:1rem; }
+    .option-btn {
+      padding:1rem; border:none; border-radius:.5rem;
+      background:var(--accent); color:#fff; font-size:1.1rem;
+      transition: transform var(--transition);
+    }
+    .option-btn:hover { transform: scale(1.02); }
+
+    .category-section {
+      display:none; flex:1; overflow-y:auto; margin-top:1rem; flex-direction:column;
+    }
+    .category-section.active { display:flex; }
+    .item-list { flex:1; overflow-y:auto; margin-bottom:1rem; }
+    .item-card {
+      background: var(--card); padding:.75rem; margin-bottom:.5rem;
+      border-radius:.5rem; box-shadow:0 1px 4px var(--shadow);
+      display:flex; justify-content:space-between; align-items:center;
     }
 
     @media(max-width:768px){
       #poets,#poems{width:100%;transform:none!important;}
+      .side-panel{width:100%;}
     }
-  </style></head>
-<body>  <header>
-    <h1> مكتبة الشعر العراقي</h1>
+  </style>
+</head>
+<body data-theme="light">
+
+  <header>
+    <h1>مكتبة الشعر العراقي</h1>
     <div>
-      <button id="settings-btn" class="icon-btn" aria-label="الإعدادات">
-        <i class="fa-solid fa-gear"></i>
-      </button>
-      <button id="theme-toggle" class="icon-btn" aria-label="تبديل الوضع">
-        <i class="fa-solid fa-moon"></i>
-      </button>
+      <button id="settings-btn" class="icon-btn"><i class="fa-solid fa-gear"></i></button>
+      <button id="theme-toggle" class="icon-btn"><i class="fa-solid fa-moon"></i></button>
+      <button id="menu-btn" class="icon-btn"><i class="fa-solid fa-bars"></i></button>
     </div>
-  </header>  <main>
-    <section id="poets" aria-label="قائمة الشعراء"></section><section id="poems" aria-label="قصائد الشاعر">
-  <input id="search-bar" placeholder="ابحث في القصائد..." aria-label="بحث"/>
-  <h2 id="poet-name"></h2>
-  <ul id="poem-list"></ul>
-</section>
+  </header>
 
-  </main><button id="fab" aria-label="إضافة قصيدة"><i class="fa-solid fa-plus"></i></button>
+  <main>
+    <section id="poets"></section>
+    <section id="poems">
+      <input id="search-bar" placeholder="ابحث في القصائد..."/>
+      <h2 id="poet-name"></h2>
+      <ul id="poem-list"></ul>
+    </section>
+  </main>
 
-  <!-- مودال إضافة/تعديل -->  <div id="modal-form" class="modal-overlay" aria-modal="true">
+  <button id="fab"><i class="fa-solid fa-plus"></i></button>
+
+  <!-- مودال إضافة/تعديل قصيدة -->
+  <div id="modal-form" class="modal-overlay">
     <div class="modal">
-      <button class="close-btn" aria-label="إغلاق"><i class="fa-solid fa-times"></i></button>
+      <button class="close-btn"><i class="fa-solid fa-times"></i></button>
       <h3 id="modal-title">إضافة قصيدة</h3>
       <input id="modal-title-input" placeholder="عنوان القصيدة"/>
       <textarea id="modal-text-input" rows="4" placeholder="نص القصيدة"></textarea>
@@ -198,189 +231,296 @@
         <button id="modal-cancel" class="cancel">إلغاء</button>
       </div>
     </div>
-  </div>  <!-- مودال الإعدادات -->  <div id="modal-settings" class="modal-overlay" aria-modal="true">
+  </div>
+
+  <!-- مودال الإعدادات -->
+  <div id="modal-settings" class="modal-overlay">
     <div class="modal">
-      <button class="close-btn" aria-label="إغلاق"><i class="fa-solid fa-times"></i></button>
+      <button class="close-btn"><i class="fa-solid fa-times"></i></button>
       <h3>حجم الخط</h3>
-      <label for="font-size-range">اختر الحجم: <span id="font-size-value"></span></label>
-      <input type="range" id="font-size-range" min="12" max="32" step="1"/>
+      <label>اختر الحجم: <span id="font-size-value"></span></label>
+      <input id="font-size-range" type="range" min="12" max="32"/>
     </div>
-  </div>  <!-- الواجهة الكاملة للقصيدة -->  <div id="full-screen" aria-modal="true">
-    <header>
-      <button id="close-full" aria-label="إغلاق"><i class="fa-solid fa-times"></i></button>
-    </header>
-    <div class="full-content">
-      <h2 id="full-title"></h2>
-      <p id="full-text"></p>
+  </div>
+
+  <!-- العرض الكامل للقصيدة -->
+  <div id="full-screen" class="modal-overlay">
+    <div class="modal">
+      <button id="close-full" class="close-btn"><i class="fa-solid fa-times"></i></button>
+      <div class="full-content">
+        <h2 id="full-title"></h2>
+        <p id="full-text"></p>
+      </div>
     </div>
-  </div>  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // عناصر DOM
-      const themeToggle = document.getElementById('theme-toggle');
-      const settingsBtn = document.getElementById('settings-btn');
-      const poetsSec    = document.getElementById('poets');
-      const poemsSec    = document.getElementById('poems');
-      const fab         = document.getElementById('fab');
-      const searchBar   = document.getElementById('search-bar');
-      const poetNameEl  = document.getElementById('poet-name');
-      const poemList    = document.getElementById('poem-list');
-      const modalForm   = document.getElementById('modal-form');
-      const closeFormBtn= modalForm.querySelector('.close-btn');
-      const modalTitle  = document.getElementById('modal-title');
-      const titleInput  = document.getElementById('modal-title-input');
-      const textInput   = document.getElementById('modal-text-input');
-      const btnSave     = document.getElementById('modal-save');
-      const btnUpdate   = document.getElementById('modal-update');
-      const btnCancel   = document.getElementById('modal-cancel');
-      const fullScreen  = document.getElementById('full-screen');
-      const closeFull   = document.getElementById('close-full');
-      const fullTitle   = document.getElementById('full-title');
-      const fullText    = document.getElementById('full-text');
+  </div>
 
-      // إعدادات حجم الخط
-      const modalSettings = document.getElementById('modal-settings');
-      const closeSettingsBtn = modalSettings.querySelector('.close-btn');
-      const rangeInput = document.getElementById('font-size-range');
-      const sizeValue  = document.getElementById('font-size-value');
+  <!-- القائمة الجانبية -->
+  <div id="side-menu">
+    <div class="side-panel">
+      <img src="/IMG_20250428_000617_167.jpg" alt="شعار" class="menu-header-image"/>
+      <button id="close-side" class="close-btn"><i class="fa-solid fa-times"></i></button>
+      <h3>القائمة</h3>
+      <div class="side-options">
+        <button id="awzan-btn" class="option-btn">أوزان</button>
+        <button id="qasayed-btn" class="option-btn">قصايد</button>
+        <button id="abyat-btn" class="option-btn">أبيات</button>
+      </div>
+      <div id="awzan-section" class="category-section">
+        <button id="awzan-add" class="option-btn">إضافة وزن</button>
+        <div id="awzan-list" class="item-list"></div>
+      </div>
+      <div id="qasayed-section" class="category-section">
+        <button id="qasayed-add" class="option-btn">إضافة قصيدة</button>
+        <div id="qasayed-list" class="item-list"></div>
+      </div>
+      <div id="abyat-section" class="category-section">
+        <button id="abyat-add" class="option-btn">إضافة بيت</button>
+        <div id="abyat-list" class="item-list"></div>
+      </div>
+    </div>
+  </div>
 
-      // بيانات افتراضية
-      const poets = [{ name:'محمود عبد الطيف', id:'mohammed' }];
-      let currentPoet = null, poems = [], editIndex = null;
+  <!-- مودالات الفئات -->
+  <div id="awzan-modal" class="modal-overlay">
+    <div class="modal">
+      <button class="close-btn"><i class="fa-solid fa-times"></i></button>
+      <h3>إضافة وزن</h3>
+      <input id="awzan-input1" placeholder="اسم الوزن"/>
+      <!-- اجعل الحقل نصيًا بدلاً من رقمي -->
+      <input id="awzan-input2" type="text" placeholder="الوصف"/>
+      <div class="buttons"><button id="awzan-save" class="save">حفظ</button></div>
+    </div>
+  </div>
 
-      // استرجاع حجم الخط
-      const savedFs = localStorage.getItem('fontSize');
-      if (savedFs) {
-        document.documentElement.style.setProperty('--fs', savedFs + 'px');
-      }
-      rangeInput.value = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--fs'));
-      sizeValue.textContent = rangeInput.value + 'px';
+  <div id="qasayed-modal" class="modal-overlay">
+    <div class="modal">
+      <button class="close-btn"><i class="fa-solid fa-times"></i></button>
+      <h3>إضافة قصيدة</h3>
+      <input id="qasayed-input1" placeholder="عنوان القصيدة"/>
+      <textarea id="qasayed-input2" rows="4" placeholder="نص القصيدة"></textarea>
+      <div class="buttons"><button id="qasayed-save" class="save">حفظ</button></div>
+    </div>
+  </div>
 
-      rangeInput.oninput = () => {
-        const v = rangeInput.value;
-        document.documentElement.style.setProperty('--fs', v + 'px');
-        sizeValue.textContent = v + 'px';
-        localStorage.setItem('fontSize', v);
-      };
+  <div id="abyat-modal" class="modal-overlay">
+    <div class="modal">
+      <button class="close-btn"><i class="fa-solid fa-times"></i></button>
+      <h3>إضافة بيت</h3>
+      <input id="abyat-input1" placeholder="عنوان البيت"/>
+      <textarea id="abyat-input2" rows="4" placeholder="نص البيت"></textarea>
+      <div class="buttons"><button id="abyat-save" class="save">حفظ</button></div>
+    </div>
+  </div>
 
-      // عرض/إخفاء مودال الإعدادات
-      settingsBtn.onclick = () => modalSettings.classList.add('active');
-      closeSettingsBtn.onclick = () => modalSettings.classList.remove('active');
-      modalSettings.onclick = e => { if(e.target===modalSettings) modalSettings.classList.remove('active'); };  
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Theme & Settings
+    const themeToggle = document.getElementById('theme-toggle');
+    const settingsBtn = document.getElementById('settings-btn');
+    const modalSettings = document.getElementById('modal-settings');
+    const closeSettingsBtn = modalSettings.querySelector('.close-btn');
+    const rangeInput = document.getElementById('font-size-range');
+    const sizeValue = document.getElementById('font-size-value');
 
-      // Theme persist
-      const savedTheme = localStorage.getItem('theme');
-      if(savedTheme==='dark') {
+    let savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme','dark');
+      themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+    }
+    themeToggle.onclick = () => {
+      const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('theme','light');
+        themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
+      } else {
         document.documentElement.setAttribute('data-theme','dark');
+        localStorage.setItem('theme','dark');
         themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
       }
-      themeToggle.onclick = () => {
-        const isDark = document.documentElement.getAttribute('data-theme')==='dark';
-        if(isDark) {
-          document.documentElement.removeAttribute('data-theme');
-          localStorage.setItem('theme','light');
-          themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
-        } else {
-          document.documentElement.setAttribute('data-theme','dark');
-          localStorage.setItem('theme','dark');
-          themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
-        }
-      };
+    };
 
-      // Render poets
-      function renderPoets() {
-        poetsSec.innerHTML = '';
-        poets.forEach(p => {
-          const div = document.createElement('div');
-          div.className = 'poet-card';
-          div.textContent = p.name;
-          div.onclick = () => openPoet(p);
-          poetsSec.append(div);
+    const savedFs = localStorage.getItem('fontSize');
+    if (savedFs) document.documentElement.style.setProperty('--fs', savedFs+'px');
+    rangeInput.value = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--fs'));
+    sizeValue.textContent = rangeInput.value+'px';
+    rangeInput.oninput = () => {
+      const v = rangeInput.value;
+      document.documentElement.style.setProperty('--fs', v+'px');
+      sizeValue.textContent = v+'px';
+      localStorage.setItem('fontSize', v);
+    };
+
+    settingsBtn.onclick = () => modalSettings.classList.add('active');
+    closeSettingsBtn.onclick = () => modalSettings.classList.remove('active');
+    modalSettings.onclick = e => { if (e.target===modalSettings) modalSettings.classList.remove('active'); };
+
+    // Core poets & poems
+    const poetsSec = document.getElementById('poets');
+    const poemsSec = document.getElementById('poems');
+    const searchBar = document.getElementById('search-bar');
+    const poetNameEl = document.getElementById('poet-name');
+    const poemList = document.getElementById('poem-list');
+    const fab = document.getElementById('fab');
+    const modalForm = document.getElementById('modal-form');
+    const closeFormBtn = modalForm.querySelector('.close-btn');
+    const modalTitle = document.getElementById('modal-title');
+    const titleInput = document.getElementById('modal-title-input');
+    const textInput = document.getElementById('modal-text-input');
+    const btnSave = document.getElementById('modal-save');
+    const btnUpdate = document.getElementById('modal-update');
+    const btnCancel = document.getElementById('modal-cancel');
+    const fullScreen = document.getElementById('full-screen');
+    const closeFull = document.getElementById('close-full');
+    const fullTitle = document.getElementById('full-title');
+    const fullText = document.getElementById('full-text');
+
+    const poets = [{ name:'محمود عبد الطيف', id:'mohammed' }];
+    let currentPoet, poems = [], editIndex;
+
+    function renderPoets() {
+      poetsSec.innerHTML = '';
+      poets.forEach(p => {
+        const d = document.createElement('div');
+        d.className = 'poet-card'; d.textContent = p.name;
+        d.onclick = () => openPoet(p);
+        poetsSec.append(d);
+      });
+    }
+    function openPoet(p) {
+      currentPoet = p.id; poetNameEl.textContent = p.name;
+      poems = JSON.parse(localStorage.getItem(p.id)||'[]');
+      poetsSec.classList.add('inactive'); poemsSec.classList.add('active');
+      renderPoems();
+    }
+    function renderPoems() {
+      const q = searchBar.value.trim();
+      poemList.innerHTML = '';
+      poems.filter(o=>o.title.includes(q)).forEach((it,i)=>{
+        const li = document.createElement('li');
+        li.className='poem-item';
+        li.innerHTML=`
+          <span class="poem-title">${it.title}</span>
+          <div class="poem-actions">
+            <button class="icon-btn edit"><i class="fa-solid fa-pen"></i></button>
+            <button class="icon-btn delete"><i class="fa-solid fa-trash"></i></button>
+          </div>`;
+        li.querySelector('.poem-title').onclick=()=>{
+          fullTitle.textContent=it.title; fullText.textContent=it.text;
+          fullScreen.classList.add('active');
+        };
+        li.querySelector('.delete').onclick=()=>{
+          if(confirm('هل تريد حذف هذه القصيدة؟')){
+            poems.splice(i,1);
+            localStorage.setItem(currentPoet,JSON.stringify(poems));
+            renderPoems();
+          }
+        };
+        li.querySelector('.edit').onclick=()=>openForm('edit',i);
+        poemList.append(li);
+      });
+    }
+    function openForm(mode,i=null){
+      modalForm.classList.add('active');
+      if(mode==='add'){
+        modalTitle.textContent='إضافة قصيدة';
+        btnSave.style.display='inline-block'; btnUpdate.style.display='none';
+        titleInput.value=''; textInput.value='';
+      } else {
+        modalTitle.textContent='تعديل قصيدة';
+        btnSave.style.display='none'; btnUpdate.style.display='inline-block';
+        editIndex=i; titleInput.value=poems[i].title; textInput.value=poems[i].text;
+      }
+    }
+    fab.onclick=()=>openForm('add');
+    btnCancel.onclick=()=>modalForm.classList.remove('active');
+    closeFormBtn.onclick=()=>modalForm.classList.remove('active');
+    modalForm.onclick=e=>{ if(e.target===modalForm) modalForm.classList.remove('active'); };
+    btnSave.onclick=()=>{
+      poems.push({ title:titleInput.value, text:textInput.value });
+      localStorage.setItem(currentPoet,JSON.stringify(poems));
+      modalForm.classList.remove('active'); renderPoems();
+    };
+    btnUpdate.onclick=()=>{
+      poems[editIndex]={ title:titleInput.value, text:textInput.value };
+      localStorage.setItem(currentPoet,JSON.stringify(poems));
+      modalForm.classList.remove('active'); renderPoems();
+    };
+    searchBar.oninput=renderPoems;
+
+    // Back button
+    const backBtn=document.createElement('button');
+    backBtn.className='icon-btn'; backBtn.innerHTML='<i class="fa-solid fa-arrow-right"></i>';
+    backBtn.style.position='fixed'; backBtn.style.top='1rem'; backBtn.style.right='1rem';
+    backBtn.onclick=()=>{
+      poemsSec.classList.remove('active'); poetsSec.classList.remove('inactive');
+    };
+    poemsSec.prepend(backBtn);
+
+    // Close full-screen
+    closeFull.onclick=()=>fullScreen.classList.remove('active');
+    fullScreen.onclick=e=>{ if(e.target===fullScreen) fullScreen.classList.remove('active'); };
+
+    renderPoets();
+
+    // Side menu logic
+    const sideMenu = document.getElementById('side-menu');
+    document.getElementById('menu-btn').onclick   = ()=> sideMenu.classList.add('active');
+    document.getElementById('close-side').onclick = ()=> {
+      sideMenu.classList.remove('active');
+      document.querySelectorAll('.category-section').forEach(s=>s.classList.remove('active'));
+      document.querySelector('.side-options').style.display='flex';
+    };
+
+    function showCategory(id){
+      document.querySelector('.side-options').style.display='none';
+      ['awzan','qasayed','abyat'].forEach(t=>{
+        document.getElementById(t+'-section').classList.toggle('active', t===id);
+      });
+    }
+    document.getElementById('awzan-btn').onclick   = ()=> showCategory('awzan');
+    document.getElementById('qasayed-btn').onclick = ()=> showCategory('qasayed');
+    document.getElementById('abyat-btn').onclick   = ()=> showCategory('abyat');
+
+    // Initialize categories
+    ['awzan','qasayed','abyat'].forEach(type=>{
+      const key = type+'List';
+      const addBtn = document.getElementById(type+'-add');
+      const modal  = document.getElementById(type+'-modal');
+      const closeM = modal.querySelector('.close-btn');
+      const saveBtn= document.getElementById(type+'-save');
+      const input1 = document.getElementById(type+'-input1');
+      const input2 = document.getElementById(type+'-input2');
+      const list   = document.getElementById(type+'-list');
+
+      function renderList(){
+        const arr = JSON.parse(localStorage.getItem(key)||'[]');
+        list.innerHTML='';
+        arr.forEach(item=>{
+          const div=document.createElement('div');
+          div.className='item-card';
+          div.innerHTML=`<div><strong>${item.field1}</strong><br/><small>${item.field2}</small></div>`;
+          list.append(div);
         });
       }
 
-      // Open poet screen
-      function openPoet(p) {
-        currentPoet = p.id;
-        poetNameEl.textContent = p.name;
-        poems = JSON.parse(localStorage.getItem(p.id) || '[]');
-        poetsSec.classList.add('inactive');
-        poemsSec.classList.add('active');
-        renderPoems();
-      }
-
-      // Render poems
-      function renderPoems() {
-        const q = searchBar.value.trim();
-        poemList.innerHTML = '';
-        poems.filter(o => o.title.includes(q)).forEach((it,i)=>{
-          const li = document.createElement('li');
-          li.className = 'poem-item';
-          li.innerHTML = `
-            <span class="poem-title">${it.title}</span>
-            <div class="poem-actions">
-              <button class="icon-btn edit"><i class="fa-solid fa-pen"></i></button>
-              <button class="icon-btn delete"><i class="fa-solid fa-trash"></i></button>
-            </div>`;
-          // full view
-          li.querySelector('.poem-title').onclick = ()=>{
-            fullTitle.textContent = it.title;
-            fullText.textContent = it.text;
-            fullScreen.classList.add('active');
-          };
-          // delete
-          li.querySelector('.delete').onclick = ()=>{
-            if(confirm('هل تريد حذف هذه القصيدة؟')){
-              poems.splice(i,1);
-              localStorage.setItem(currentPoet, JSON.stringify(poems));
-              renderPoems();
-            }
-          };
-          // edit
-          li.querySelector('.edit').onclick = ()=> openForm('edit',i);
-          poemList.append(li);
-        });
-      }
-
-      // Form open
-      function openForm(mode,idx=null){
-        modalForm.classList.add('active');
-        if(mode==='add'){
-          modalTitle.textContent='إضافة قصيدة'; btnSave.classList.remove('hidden'); btnUpdate.classList.add('hidden'); titleInput.value=''; textInput.value='';
-        } else {
-          modalTitle.textContent='تعديل قصيدة'; btnSave.classList.add('hidden'); btnUpdate.classList.remove('hidden'); editIndex=idx;
-          titleInput.value=poems[idx].title; textInput.value=poems[idx].text;
-        }
-      }
-      btnCancel.onclick = ()=> modalForm.classList.remove('active');
-      closeFormBtn.onclick = ()=> modalForm.classList.remove('active');
-      modalForm.onclick = e=>{ if(e.target===modalForm) modalForm.classList.remove('active'); };
-
-      // Save / Update
-      btnSave.onclick = ()=>{
-        poems.push({ title: titleInput.value, text: textInput.value });
-        localStorage.setItem(currentPoet, JSON.stringify(poems)); modalForm.classList.remove('active'); renderPoems();
+      addBtn.onclick=()=>modal.classList.add('active');
+      closeM.onclick=()=>modal.classList.remove('active');
+      saveBtn.onclick=()=>{
+        const f1=input1.value.trim(), f2=input2.value.trim();
+        if(!f1||!f2) return alert('املأ الحقول');
+        const arr=JSON.parse(localStorage.getItem(key)||'[]');
+        arr.push({ field1:f1, field2:f2 });
+        localStorage.setItem(key,JSON.stringify(arr));
+        input1.value=''; input2.value='';
+        modal.classList.remove('active');
+        renderList();
       };
-      btnUpdate.onclick = ()=>{
-        poems[editIndex] = { title: titleInput.value, text: textInput.value };
-        localStorage.setItem(currentPoet, JSON.stringify(poems)); modalForm.classList.remove('active'); renderPoems();
-      };
-      fab.onclick = ()=> openForm('add');
-
-      // Search
-      searchBar.oninput = renderPoems;
-
-      // Close full-screen
-      closeFull.onclick = ()=> fullScreen.classList.remove('active');
-      fullScreen.onclick = e=>{ if(e.target===fullScreen) fullScreen.classList.remove('active'); };
-
-      // Back button
-      const backBtn = document.createElement('button');
-      backBtn.className='icon-btn'; backBtn.innerHTML='<i class="fa-solid fa-arrow-right"></i>';
-      backBtn.style.position='fixed'; backBtn.style.top='1rem'; backBtn.style.right='1rem';
-      backBtn.onclick = ()=>{ poemsSec.classList.remove('active'); poetsSec.classList.remove('inactive'); };
-      poemsSec.prepend(backBtn);
-
-      renderPoets();
+      renderList();
     });
-  </script></body>
+
+  });
+  </script>
+
+</body>
 </html>
