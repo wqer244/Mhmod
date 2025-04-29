@@ -285,19 +285,16 @@
         <button id="qasayed-btn" class="option-btn">قصايد</button>
         <button id="abyat-btn" class="option-btn">أبيات</button>
       </div>
-      <!-- قسم الأوزان -->
       <div id="awzan-section" class="category-section">
         <button class="back-section icon-btn"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
         <button id="awzan-add" class="option-btn">إضافة وزن</button>
         <div id="awzan-list"></div>
       </div>
-      <!-- قسم القصايد الجانبي -->
       <div id="qasayed-section" class="category-section">
         <button class="back-section icon-btn"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
         <button id="qasayed-add" class="option-btn">إضافة قصيدة</button>
         <div id="qasayed-list"></div>
       </div>
-      <!-- قسم الأبيات -->
       <div id="abyat-section" class="category-section">
         <button class="back-section icon-btn"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
         <button id="abyat-add" class="option-btn">إضافة بيت</button>
@@ -372,45 +369,45 @@
 
     // بيانات الشعراء والقصائد
     const poets = [{ name:'محمود عبد الطيف', id:'mohammed' }];
-    let currentPoet=null, poems=[], editIndex=null;
+    let currentPoet = null, poems = [], editIndex = null;
 
     function renderPoets(){
-      poetsSec.innerHTML='';
-      poets.forEach(p=>{
-        const d=document.createElement('div');
-        d.className='poet-card'; d.textContent=p.name;
-        d.onclick=()=>openPoet(p);
+      poetsSec.innerHTML = '';
+      poets.forEach(p => {
+        const d = document.createElement('div');
+        d.className = 'poet-card'; d.textContent = p.name;
+        d.onclick = () => openPoet(p);
         poetsSec.appendChild(d);
       });
     }
 
     function openPoet(p){
-      currentPoet=p;
-      poetNameEl.textContent=p.name;
-      poems=JSON.parse(localStorage.getItem('poems-'+p.id)||'[]');
+      currentPoet = p;
+      poetNameEl.textContent = p.name;
+      poems = JSON.parse(localStorage.getItem('poems-'+p.id) || '[]');
       poetsSec.classList.add('inactive');
       poemsSec.classList.add('active');
       renderPoems();
     }
 
     function renderPoems(){
-      poemList.innerHTML='';
-      const q=searchBar.value.trim().toLowerCase();
-      poems.filter(x=>x.title.toLowerCase().includes(q)).forEach((it,i)=>{
-        const li=document.createElement('li');
-        li.className='poem-item';
-        const t=document.createElement('div');
-        t.className='poem-title'; t.textContent=it.title;
-        t.onclick=()=>showFull(it.title,it.text);
-        const act=document.createElement('div'); act.className='poem-actions';
-        ['edit','delete'].forEach(type=>{
-          const btn=document.createElement('button');
-          btn.className=type;
-          btn.innerHTML= type==='edit'?'<i class="fa-solid fa-pen"></i>':'<i class="fa-solid fa-trash"></i>';
-          btn.onclick=e=>{
+      poemList.innerHTML = '';
+      const q = searchBar.value.trim().toLowerCase();
+      poems.filter(x => x.title.toLowerCase().includes(q)).forEach((it, i) => {
+        const li = document.createElement('li');
+        li.className = 'poem-item';
+        const t = document.createElement('div');
+        t.className = 'poem-title'; t.textContent = it.title;
+        t.onclick = () => showFull(it.title, it.text);
+        const act = document.createElement('div'); act.className = 'poem-actions';
+        ['edit','delete'].forEach(type => {
+          const btn = document.createElement('button');
+          btn.className = type;
+          btn.innerHTML = type==='edit' ? '<i class="fa-solid fa-pen"></i>' : '<i class="fa-solid fa-trash"></i>';
+          btn.onclick = e => {
             e.stopPropagation();
-            if(type==='edit') openForm('qasayed',i);
-            else if(confirm('هل تريد حذف هذه القصيدة؟')){
+            if (type === 'edit') openForm('qasayed', i);
+            else if (confirm('هل تريد حذف هذه القصيدة؟')) {
               poems.splice(i,1);
               savePoems();
               renderPoems();
@@ -424,63 +421,69 @@
       });
     }
 
-    searchBar.oninput=renderPoems;
+    searchBar.oninput = renderPoems;
 
-    // فتح المودال للإضافة/التعديل
-    function openForm(type, idx=null){
-      modalTitle.textContent = idx===null?
-        `إضافة ${type==='awzan'?'وزن':type==='qasayed'?'قصيدة':'بيت'}` :
-        `تعديل ${type==='awzan'?'وزن':type==='qasayed'?'قصيدة':'بيت'}`;
-      input1.value=''; input2.value='';
-      btnSave.style.display = idx===null?'block':'none';
-      btnUpdate.style.display = idx===null?'none':'block';
+    // **التعديل هنا**: فتح المودال مع تعبئة الحقول من المصفوفة `poems` عند النوع 'qasayed'
+    function openForm(type, idx = null){
+      modalTitle.textContent = idx===null
+        ? `إضافة ${type==='awzan'?'وزن':type==='qasayed'?'قصيدة':'بيت'}`
+        : `تعديل ${type==='awzan'?'وزن':type==='qasayed'?'قصيدة':'بيت'}`;
+      input1.value = '';
+      input2.value = '';
+      btnSave.style.display   = idx===null ? 'block' : 'none';
+      btnUpdate.style.display = idx===null ? 'none'  : 'block';
       editIndex = idx;
       modalForm.setAttribute('data-type', type);
-      if(idx!==null){
-        // تعبئة الحقول عند التعديل
-        const arr = JSON.parse(localStorage.getItem(type+'List')||'[]');
-        input1.value = arr[idx].field1;
-        input2.value = arr[idx].field2;
+
+      if (idx !== null) {
+        if (type === 'qasayed') {
+          // هنا نملأ الحقول من مصفوفة القصائد
+          input1.value = poems[idx].title;
+          input2.value = poems[idx].text;
+        } else {
+          const arr = JSON.parse(localStorage.getItem(type+'List') || '[]');
+          input1.value = arr[idx].field1;
+          input2.value = arr[idx].field2;
+        }
       }
+
       modalForm.classList.add('active');
     }
 
-    fab.onclick=()=>openForm('qasayed');
-    closeForm.onclick=btnCancel.onclick=()=>modalForm.classList.remove('active');
-    modalForm.onclick=e=>{ if(e.target===modalForm) modalForm.classList.remove('active'); };
+    fab.onclick = () => openForm('qasayed');
+    closeForm.onclick = btnCancel.onclick = () => modalForm.classList.remove('active');
+    modalForm.onclick = e => { if (e.target === modalForm) modalForm.classList.remove('active'); };
 
-    // حفظ قصيدة جديدة
-    btnSave.onclick=()=>{
-      const type=modalForm.getAttribute('data-type');
-      const f1=input1.value.trim(), f2=input2.value.trim();
-      if(!f1||!f2) return alert('املأ الحقول');
-      if(type==='qasayed'){
-        poems.push({ title:f1, text:f2 });
+    btnSave.onclick = () => {
+      const type = modalForm.getAttribute('data-type');
+      const f1 = input1.value.trim(), f2 = input2.value.trim();
+      if (!f1 || !f2) return alert('املأ الحقول');
+      if (type === 'qasayed') {
+        poems.push({ title: f1, text: f2 });
         savePoems();
         renderPoems();
       } else {
-        const key = type+'List';
-        const arr = JSON.parse(localStorage.getItem(key)||'[]');
-        arr.push({ field1:f1, field2:f2 });
+        const key = type + 'List';
+        const arr = JSON.parse(localStorage.getItem(key) || '[]');
+        arr.push({ field1: f1, field2: f2 });
         localStorage.setItem(key, JSON.stringify(arr));
         renderCategory(type);
       }
       modalForm.classList.remove('active');
     };
 
-    // تحديث عنصر
-    btnUpdate.onclick=()=>{
-      const type=modalForm.getAttribute('data-type');
-      const f1=input1.value.trim(), f2=input2.value.trim();
-      if(!f1||!f2) return alert('املأ الحقول');
-      if(type==='qasayed'){
-        poems[editIndex]={ title:f1, text:f2 };
+    btnUpdate.onclick = () => {
+      const type = modalForm.getAttribute('data-type');
+      const f1 = input1.value.trim(), f2 = input2.value.trim();
+      if (!f1 || !f2) return alert('املأ الحقول');
+      if (type === 'qasayed') {
+        poems[editIndex] = { title: f1, text: f2 };
         savePoems();
         renderPoems();
       } else {
-        const key = type+'List';
-        const arr = JSON.parse(localStorage.getItem(key)||'[]');
-        arr[editIndex]={ field1:f1, field2:f2 };
+        const key = type + 'List';
+        const arr = JSON.parse(localStorage.getItem(key) || '[]');
+        arr[editIndex] = { field1: f1, field2: f2 };
         localStorage.setItem(key, JSON.stringify(arr));
         renderCategory(type);
       }
@@ -488,7 +491,7 @@
     };
 
     function savePoems(){
-      localStorage.setItem('poems-'+currentPoet.id, JSON.stringify(poems));
+      localStorage.setItem('poems-' + currentPoet.id, JSON.stringify(poems));
     }
 
     // عرض كامل وإخفاء القائمة الجانبية
@@ -498,55 +501,50 @@
       sideMenu.classList.remove('active');
       fullScreen.classList.add('active');
     }
-    closeFull.onclick=()=>fullScreen.classList.remove('active');
-    fullScreen.onclick=e=>{ if(e.target===fullScreen) fullScreen.classList.remove('active'); };
+    closeFull.onclick = () => fullScreen.classList.remove('active');
+    fullScreen.onclick = e => { if (e.target === fullScreen) fullScreen.classList.remove('active'); };
 
     // القائمة الجانبية للفئات
-    document.getElementById('menu-btn').onclick  = ()=>sideMenu.classList.add('active');
-    document.getElementById('close-side').onclick= ()=>sideMenu.classList.remove('active');
-    sideMenu.onclick = e=>{ if(e.target===sideMenu) sideMenu.classList.remove('active'); };
+    document.getElementById('menu-btn').onclick   = () => sideMenu.classList.add('active');
+    document.getElementById('close-side').onclick = () => sideMenu.classList.remove('active');
+    sideMenu.onclick = e => { if (e.target === sideMenu) sideMenu.classList.remove('active'); };
 
-    // التعامل مع كل فئة
-    ['awzan','qasayed','abyat'].forEach(type=>{
-      const btnAdd = document.getElementById(type+'-add');
-      const listEl = document.getElementById(type+'-list');
+    ['awzan','qasayed','abyat'].forEach(type => {
+      const btnAdd = document.getElementById(type + '-add');
+      const listEl = document.getElementById(type + '-list');
       const backBtns = document.querySelectorAll(`#${type}-section .back-section`);
 
-      // زر إظهار القسم
-      document.getElementById(type+'-btn').onclick = ()=>{
-        document.querySelector('.side-options').style.display='none';
-        document.querySelectorAll('.category-section').forEach(s=>s.classList.remove('active'));
-        document.getElementById(type+'-section').classList.add('active');
+      document.getElementById(type + '-btn').onclick = () => {
+        document.querySelector('.side-options').style.display = 'none';
+        document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(type + '-section').classList.add('active');
       };
-      // زر رجوع داخل القسم
-      backBtns.forEach(b=> b.onclick = ()=>{
-        document.querySelectorAll('.category-section').forEach(s=>s.classList.remove('active'));
-        document.querySelector('.side-options').style.display='flex';
+      backBtns.forEach(b => b.onclick = () => {
+        document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
+        document.querySelector('.side-options').style.display = 'flex';
       });
-      // زر إضافة عنصر
-      btnAdd.onclick = ()=> openForm(type);
+      btnAdd.onclick = () => openForm(type);
 
-      // دالة عرض محتويات الفئة مع تمرير غير محدود
       function renderCategory(){
         listEl.innerHTML = '';
-        const arr = JSON.parse(localStorage.getItem(type+'List')||'[]');
-        arr.forEach((item,i)=>{
+        const arr = JSON.parse(localStorage.getItem(type + 'List') || '[]');
+        arr.forEach((item, i) => {
           const div = document.createElement('div');
           div.className = 'item-card';
           const tt = document.createElement('div');
           tt.className = 'item-title'; tt.textContent = item.field1;
-          tt.onclick = ()=> showFull(item.field1, item.field2);
-          const act = document.createElement('div'); act.className='item-actions';
-          ['edit','delete'].forEach(eType=>{
+          tt.onclick = () => showFull(item.field1, item.field2);
+          const act = document.createElement('div'); act.className = 'item-actions';
+          ['edit','delete'].forEach(eType => {
             const b = document.createElement('button');
             b.className = eType;
-            b.innerHTML = eType==='edit'?'<i class="fa-solid fa-pen"></i>':'<i class="fa-solid fa-trash"></i>';
-            b.onclick = ev=>{
+            b.innerHTML = eType==='edit' ? '<i class="fa-solid fa-pen"></i>' : '<i class="fa-solid fa-trash"></i>';
+            b.onclick = ev => {
               ev.stopPropagation();
-              if(eType==='edit') openForm(type,i);
-              else if(confirm('هل تريد حذف العنصر؟')){
+              if (eType==='edit') openForm(type, i);
+              else if (confirm('هل تريد حذف العنصر؟')){
                 arr.splice(i,1);
-                localStorage.setItem(type+'List', JSON.stringify(arr));
+                localStorage.setItem(type + 'List', JSON.stringify(arr));
                 renderCategory();
               }
             };
@@ -557,7 +555,6 @@
           listEl.appendChild(div);
         });
       }
-      // عرض أول للقائمة
       renderCategory();
     });
 
@@ -566,13 +563,12 @@
     backBtn.className = 'icon-btn';
     backBtn.innerHTML = '<i class="fa-solid fa-arrow-right"></i>';
     backBtn.style.cssText = 'position:fixed;top:1rem;right:1rem;z-index:20;';
-    backBtn.onclick = ()=>{
+    backBtn.onclick = () => {
       poemsSec.classList.remove('active');
       poetsSec.classList.remove('inactive');
     };
     poemsSec.prepend(backBtn);
 
-    // البداية
     renderPoets();
   });
   </script>
